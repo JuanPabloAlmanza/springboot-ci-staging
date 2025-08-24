@@ -1,0 +1,22 @@
+networks:
+  local_network:
+    name: local_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+          gateway: 172.25.0.1
+
+services:
+  spring-docker-demo:
+    image: spring-docker-demo:latest
+    container_name: spring-docker-demo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    networks:
+      local_network:
+        ipv4_address: 172.25.0.10
+

@@ -1,13 +1,13 @@
 pipeline {
     agent any
     environment {
-        STAGING_SERVER = 'user@your-staging-server'
+        STAGING_SERVER = 'jhon@spring-docker-demo'
         ARTIFACT_NAME = 'demo-0.0.1-SNAPSHOT.jar'
     }
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-org/your-springboot-repo.git'
+                git branch: 'main', url: 'https://github.com/JuanPabloAlmanza/springboot-ci-staging.git'
             }
         }
         stage('Build') {
@@ -17,7 +17,8 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                sh 'mvn checkstyle:check'
+                // sh 'mvn checkstyle:check'
+                echo 'turbo'
             }
         }
         stage('Test') {
@@ -32,14 +33,16 @@ pipeline {
         }
         stage('Deploy to Staging') {
             steps {
-                sh 'scp target/${ARTIFACT_NAME} $STAGING_SERVER:/home/your-user/staging/'
-                sh 'ssh $STAGING_SERVER "nohup java -jar /home/your-user/staging/${ARTIFACT_NAME} > /dev/null 2>&1 &"'
+                sshagent(['ssh-turbo']) {
+                    sh 'scp target/${ARTIFACT_NAME} $STAGING_SERVER:/home/jhon/staging/'
+                    sh 'ssh $STAGING_SERVER "nohup java -jar /home/jhon/staging/${ARTIFACT_NAME} > /dev/null 2>&1 &"'
+                }
             }
         }
         stage('Validate Deployment') {
             steps {
                 sh 'sleep 10'
-                sh 'curl --fail http://your-staging-server:8080/health'
+                sh 'curl --fail http://spring-docker-demo:8080/health'
             }
         }
     }

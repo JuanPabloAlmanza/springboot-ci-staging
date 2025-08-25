@@ -42,8 +42,8 @@ pipeline {
         }
         stage('Validate Deployment') {
             steps {
-                sh 'sleep 10'                
-                    sh 'curl --fail http://spring-docker-demo:8080/health'                
+                sh 'sleep 30'                
+                    sh 'curl --fail http://localhost:8080/health'                
             }
         }
     }

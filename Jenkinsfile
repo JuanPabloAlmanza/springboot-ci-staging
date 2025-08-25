@@ -34,15 +34,16 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 sshagent(['ssh-turbo']) {
-                    sh 'scp target/${ARTIFACT_NAME} $STAGING_SERVER:/home/jhon/staging/'
+                    // sh 'scp target/${ARTIFACT_NAME} $STAGING_SERVER:/home/jhon/staging/'
+                    sh 'scp -o StrictHostKeyChecking=no target/demo-0.0.1-SNAPSHOT.jar jhon@spring-docker-demo:/home/jhon/staging/'
                     sh 'ssh $STAGING_SERVER "nohup java -jar /home/jhon/staging/${ARTIFACT_NAME} > /dev/null 2>&1 &"'
                 }
             }
         }
         stage('Validate Deployment') {
             steps {
-                sh 'sleep 10'
-                sh 'curl --fail http://spring-docker-demo:8080/health'
+                sh 'sleep 10'                
+                    sh 'curl --fail http://spring-docker-demo:8080/health'                
             }
         }
     }
